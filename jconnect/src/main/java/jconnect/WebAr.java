@@ -152,12 +152,30 @@ public class WebAr {
 
     /** Levels of HTTPS security */
     public static enum HTTPS_OPTS {
-        HTTPS_BASIC,
-        HTTPS_PROVIDED_CA,
-        HTTPS_DEFAULT_PUBLIC_CA,
-        HTTPS_PRIVATE_CA,
+
         /**
-         * Create certificate from PEM encoded string
+         * Insecure requests with all trusting validators 
+         */
+        HTTPS_BASIC,
+
+        /**
+         * provided JKS store (system file or jar embedded) 
+         */
+        HTTPS_PROVIDED_CA,
+
+        /**
+         * Use java provided JKS stores 
+         */
+        HTTPS_DEFAULT_PUBLIC_CA,
+
+        /**
+         * Optional Private CA certificate bundle in PEM encoding 
+         */
+        HTTPS_PRIVATE_CA,
+
+        /**
+         * Create certificate from PEM encoded string.
+         * @see jconnect.HttpClient.CaCertPem
          */
         HTTPS_DEVELOPMENT;
     }

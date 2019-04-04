@@ -1,24 +1,15 @@
 package com.gustinmi.cryptotest;
 
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
-import java.security.Provider;
-import java.security.Security;
+import java.security.*;
 import java.util.Iterator;
-
-import javax.crypto.BadPaddingException;
-import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
-import javax.crypto.SecretKey;
-import javax.crypto.ShortBufferException;
+import javax.crypto.*;
 import javax.crypto.spec.SecretKeySpec;
 
 // import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
-public class AppInit 
+public class CipherAndProviderTest 
 {
+
 	public static void main( String[] args ) throws NoSuchAlgorithmException, NoSuchProviderException, NoSuchPaddingException, InvalidKeyException, ShortBufferException, IllegalBlockSizeException, BadPaddingException {
 		
 		byte[] input = new byte[]{
@@ -44,14 +35,14 @@ public class AppInit
 		int ctLength = cipher.update(input, 0, input.length, cipherText, 0);
 		ctLength += cipher.doFinal(cipherText, ctLength);
 		
-		
-		
 		System.out.println("cipher text" + Utils.toHex(cipherText, cipherText.length));
-		
 		
 	}
 	
 	
+    /** Capabilities of java crypto provider
+     * @param args
+     */
 	public static void providerCapabilities( String[] args ) {
 		
 		Provider p = Security.getProvider("BC");
@@ -64,6 +55,9 @@ public class AppInit
 	}
 	
 	
+    /** Provider precendence 
+     * provider added in jre/lib/security java.security
+    */
 	public static void providerPrecendence( String[] args ) throws NoSuchAlgorithmException, NoSuchPaddingException, NoSuchProviderException {
 		
 		Cipher cipher = Cipher.getInstance("Blowfish/ECB/NoPadding");
@@ -76,17 +70,19 @@ public class AppInit
 		
 	}
 	
-	public static void testProvider( String[] args ) {
+    /**
+     * 
+     * provider added in jre/lib/security java.security
+     * security.provider.11=org.bouncycastle.jce.provider.BouncyCastleProvider
+     * @param provider BC
+     */
+    public static void testProvider(String provider) {
 		
-		// provider added in jre/lib/security java.security
-		// security.provider.11=org.bouncycastle.jce.provider.BouncyCastleProvider
-		
-		// adding programatically
+        // you can add provider Programatically
 		//Security.addProvider(new BouncyCastleProvider());
 		
-		String provider = "BC";
 		if (Security.getProvider(provider) == null) {
-			System.out.println(provider + " not installed!");
+            throw new IllegalArgumentException(provider + " provider is not installed");
 		}else {
 			System.out.println(provider + " installed!");
 		}
@@ -95,7 +91,10 @@ public class AppInit
 		
 	}
 	
-    public static void testUnlimitedPolicyFiles( String[] args ) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException
+    /**
+     * Unlimited policy file provider (you download file from java website ) 
+     */
+    public static void testUnlimitedPolicyFiles() throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException
     {
     	byte[] data = new byte[] { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07 };
     	

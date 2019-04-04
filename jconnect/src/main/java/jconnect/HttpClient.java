@@ -20,7 +20,8 @@ import jconnect.WebAr.*;
  * REST interface, form post and multipart as well
  * Could interact with SSL enabled services or HTTP with or without authentication
  * Supports proxy
- * Main components are: url parser and builder, HTTP protocol handler, secure SSL/TLS component
+ * Main components are: url parser and builder, HTTP protocol handler, secure SSL/TLS component.
+ * Once the instance of the client is prepared, it can be made static and system wide, and then multiple request can be doe using same client 
  * @author Mitja Gustin gustinmi [at] gmail [dot] com   
  */
 public class HttpClient {

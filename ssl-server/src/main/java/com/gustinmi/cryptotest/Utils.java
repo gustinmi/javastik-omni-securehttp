@@ -1,40 +1,21 @@
 package com.gustinmi.cryptotest;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.math.BigInteger;
-import java.security.InvalidKeyException;
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
-import java.security.PrivateKey;
-import java.security.PublicKey;
-import java.security.SecureRandom;
+import java.security.*;
 import java.security.cert.X509Certificate;
 import java.util.Date;
 import java.util.logging.Logger;
-
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 import javax.security.auth.x500.X500Principal;
 import javax.security.auth.x500.X500PrivateCredential;
-
 import org.bouncycastle.asn1.ASN1InputStream;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.x500.X500NameBuilder;
 import org.bouncycastle.asn1.x500.style.BCStyle;
-import org.bouncycastle.asn1.x509.AuthorityKeyIdentifier;
-import org.bouncycastle.asn1.x509.BasicConstraints;
-import org.bouncycastle.asn1.x509.KeyUsage;
-import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
-import org.bouncycastle.asn1.x509.X509Extensions;
+import org.bouncycastle.asn1.x509.*;
 import org.bouncycastle.cert.X509v3CertificateBuilder;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.bouncycastle.cert.jcajce.JcaX509v3CertificateBuilder;
@@ -97,12 +78,6 @@ public class Utils {
 		return certGen.generateX509Certificate(pair.getPrivate(), "BC");
 	}
 
-	private static X500NameBuilder createStdBuilderIssuer() {
-		final X500NameBuilder builder = new X500NameBuilder(BCStyle.INSTANCE);
-		builder.addRDN(BCStyle.CN, "TestIssuer CA Root Certificate");
-		return builder;
-	}
-
 	private static X500NameBuilder createStdBuilderSubject(String cn) {
 		final X500NameBuilder builder = new X500NameBuilder(BCStyle.INSTANCE);
 		builder.addRDN(BCStyle.CN, cn);
@@ -113,8 +88,8 @@ public class Utils {
 	public static X509Certificate generateRootCertBuilder(KeyPair pair) throws Exception {
 
 		// distinguished name table.
-		final X500NameBuilder builderIssuer = createStdBuilderIssuer();
-		final X500NameBuilder builderSubject = createStdBuilderSubject("TestSubject Certificate");
+        final X500NameBuilder builderIssuer = createStdBuilderSubject("TestIssuer CA Root Certificate");
+        final X500NameBuilder builderSubject = createStdBuilderSubject("TestIssuer CA Root Subject");
 		final ContentSigner sigGen = new JcaContentSignerBuilder("SHA256withRSA").setProvider(BC).build(pair.getPrivate());
 		
 		final X509v3CertificateBuilder certGen = new JcaX509v3CertificateBuilder(

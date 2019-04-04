@@ -3,14 +3,15 @@ package com.gustinmi.cryptotest.cha10;
 import java.io.FileOutputStream;
 import java.security.KeyStore;
 import java.security.cert.Certificate;
-
 import javax.security.auth.x500.X500PrivateCredential;
 
 /**
  * Create the various credentials for an SSL session
  */
 public class CreateKeyStores {
+
 	public static void main(String[] args) throws Exception {
+
 		X500PrivateCredential rootCredential = Utils.createRootCredential();
 		X500PrivateCredential interCredential = Utils.createIntermediateCredential(rootCredential.getPrivateKey(), rootCredential.getCertificate());
 		X500PrivateCredential endCredential = Utils.createEndEntityCredential(interCredential.getPrivateKey(), interCredential.getCertificate());
@@ -36,4 +37,5 @@ public class CreateKeyStores {
 		keyStore.setKeyEntry(Utils.SERVER_NAME, rootCredential.getPrivateKey(), Utils.SERVER_PASSWORD, new Certificate[] { rootCredential.getCertificate() });
 		keyStore.store(new FileOutputStream(Utils.SERVER_NAME + ".jks"), Utils.SERVER_PASSWORD);
 	}
+
 }

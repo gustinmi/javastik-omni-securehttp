@@ -2,12 +2,7 @@ package com.gustinmi.cryptotest.cha10;
 
 import java.io.InputStream;
 import java.net.URL;
-
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSession;
-import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.*;
 import javax.security.auth.x500.X500Principal;
 
 /**
@@ -18,7 +13,6 @@ public class HTTPSClientExample extends SSLClientWithClientAuthTrustExample {
 	 * Verifier to check host has identified itself using "Test CA Certificate".
 	 */
 	private static class Validator implements HostnameVerifier {
-		@Override
 		public boolean verify(String hostName, SSLSession session) {
 			try {
 				X500Principal hostID = (X500Principal) session.getPeerPrincipal();

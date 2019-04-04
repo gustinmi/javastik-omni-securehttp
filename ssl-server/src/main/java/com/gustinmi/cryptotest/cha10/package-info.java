@@ -1,5 +1,5 @@
 /**
- * 
+ *  Imported sample from book : Beginning cryptography in Java
  */
 /**
  * @author gustin

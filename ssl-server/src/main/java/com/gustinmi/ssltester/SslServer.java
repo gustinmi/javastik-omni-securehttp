@@ -1,29 +1,18 @@
 package com.gustinmi.ssltester;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.security.Principal;
+import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLPeerUnverifiedException;
-import javax.net.ssl.SSLServerSocket;
-import javax.net.ssl.SSLServerSocketFactory;
-import javax.net.ssl.SSLSession;
-import javax.net.ssl.SSLSocket;
-
-import com.gustinmi.cryptotest.cha10.SSLServerWithClientAuthIdExample;
+import javax.net.ssl.*;
 import com.gustinmi.cryptotest.cha10.Utils;
 
 /**
  * Basic SSL Server with optional client authentication.
  */
-public class SslServer extends SSLServerWithClientAuthIdExample {
+public class SslServer {
 
 	public static final Logger log = Utils.loggerForThisClass();
 
@@ -39,8 +28,7 @@ public class SslServer extends SSLServerWithClientAuthIdExample {
 			if (ch != '\r')
 				lastCh = ch;
 		}
-
-		System.out.println();
+        System.out.println("end of request.");
 	}
 
 	/**
@@ -48,24 +36,31 @@ public class SslServer extends SSLServerWithClientAuthIdExample {
 	 */
 	private static void sendResponse(OutputStream out) {
 		PrintWriter pWrt = new PrintWriter(new OutputStreamWriter(out));
+        // HTTP head
 		pWrt.print("HTTP/1.1 200 OK\r\n");
 		pWrt.print("Content-Type: text/html\r\n");
+        // empty line delimiter for body
 		pWrt.print("\r\n");
+        // HTTP request body
 		pWrt.print("<html>\r\n");
 		pWrt.print("<body>\r\n");
-		pWrt.print("Hello World!\r\n");
+        pWrt.print("Hello from SSL server \r\n");
 		pWrt.print("</body>\r\n");
 		pWrt.print("</html>\r\n");
 		pWrt.flush();
 	}
 
 	public static void main(String[] args) throws Exception {
+	    
+	    if (new File("server.jks").exists() == false || new File("trustStore.jks").exists() == false)
+	        throw new IllegalStateException("Please create keystores first. Run CreateKeyStores.java");
+	    
 
 		log.info("Starting SSL server on port " + Utils.PORT_NO);
 
 		// Get name and IP address of the local host
 		try {
-			InetAddress address = InetAddress.getLocalHost();
+            final InetAddress address = InetAddress.getLocalHost();
 			log.info("Local Host:");
 			log.info("\t" + address.getHostName());
 			log.info("\t" + address.getHostAddress());
@@ -73,43 +68,48 @@ public class SslServer extends SSLServerWithClientAuthIdExample {
 			System.out.println("Unable to determine this host's address");
 		}
 
-		SSLContext sslContext = createSSLContext();
-		SSLServerSocketFactory fact = sslContext.getServerSocketFactory();
-		SSLServerSocket sSock = (SSLServerSocket) fact.createServerSocket(Utils.PORT_NO);
+        final SSLContext sslContext = SslContextFactory.createSSLContext("server.jks", Utils.SERVER_PASSWORD, "trustStore.jks", Utils.TRUST_STORE_PASSWORD);
+        final SSLServerSocketFactory fact = sslContext.getServerSocketFactory();
+        final SSLServerSocket sSock = (SSLServerSocket) fact.createServerSocket(Utils.PORT_NO);
 
-		// client authenticate where possible
+        // client authenticate where possible but not required
 		sSock.setWantClientAuth(true);
 
-		for (;;) {
-			SSLSocket sslSock = (SSLSocket) sSock.accept();
+        for (;;) { // run forever
+
+            final SSLSocket sslSock = (SSLSocket) sSock.accept();
 			log.info("Client request received");
 			
-			 System.out.println("Handling client at " +
+            System.out.println("Handling client at " +
 					 sslSock.getInetAddress().getHostAddress() + " on port " +
 					 sslSock.getPort());
-
 			
 			try {
 				sslSock.startHandshake();
 			} catch (IOException e) {
-				continue;
+                log.log(Level.SEVERE, e.getMessage(), e);
+                continue; // continue serving, do not stop if faulty client connects
 			}
 
-			readRequest(sslSock.getInputStream());
+            //try (final InputStream inputStream = sslSock.getInputStream()) {
+                readRequest(sslSock.getInputStream());
+            //}
 
-			SSLSession session = sslSock.getSession();
+            final SSLSession session = sslSock.getSession();
 
 			try {
-				Principal clientID = session.getPeerPrincipal();
-
+                final Principal clientID = session.getPeerPrincipal();
 				log.info("client identified as: " + clientID);
 			} catch (SSLPeerUnverifiedException e) {
 				System.out.println("client not authenticated" + e.getMessage());
 			}
 
-			sendResponse(sslSock.getOutputStream());
+            //try (final OutputStream outputStream = sslSock.getOutputStream()) {
+            sendResponse(sslSock.getOutputStream());
+            sslSock.close(); // end client request        
+            //}
 
-			sslSock.close();
+
 		}
 	}
 }

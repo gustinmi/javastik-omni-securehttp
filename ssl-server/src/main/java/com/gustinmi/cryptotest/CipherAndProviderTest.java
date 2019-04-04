@@ -43,9 +43,9 @@ public class CipherAndProviderTest
     /** Capabilities of java crypto provider
      * @param args
      */
-	public static void providerCapabilities( String[] args ) {
+    public static void providerCapabilities(String provider) {
 		
-		Provider p = Security.getProvider("BC");
+        Provider p = Security.getProvider(provider);
 		Iterator<Object> it = p.keySet().iterator();
 		while(it.hasNext()) {
 			String s = (String) it.next();
@@ -58,7 +58,7 @@ public class CipherAndProviderTest
     /** Provider precendence 
      * provider added in jre/lib/security java.security
     */
-	public static void providerPrecendence( String[] args ) throws NoSuchAlgorithmException, NoSuchPaddingException, NoSuchProviderException {
+    public static void providerPrecendence() throws NoSuchAlgorithmException, NoSuchPaddingException, NoSuchProviderException {
 		
 		Cipher cipher = Cipher.getInstance("Blowfish/ECB/NoPadding");
 		System.out.println(cipher.getProvider());

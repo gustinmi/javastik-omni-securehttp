@@ -37,9 +37,6 @@ public class Utils {
 	public static String INTERMEDIATE_ALIAS = "intermediate";
 	public static String END_ENTITY_ALIAS = "end";
 
-	/**
-	 * Names and passwords for the key store entries we need.
-	 */
 	public static final String SERVER_NAME = "server";
 	public static final char[] SERVER_PASSWORD = "serverPassword".toCharArray();
 
@@ -105,7 +102,7 @@ public class Utils {
 	}
 
 	private static ASN1Sequence fromKey(PublicKey pubKey) throws InvalidKeyException {
-		try {
+        try {
 			SubjectPublicKeyInfo info = new SubjectPublicKeyInfo((ASN1Sequence) new ASN1InputStream(pubKey.getEncoded()).readObject());
 
 			return (ASN1Sequence) new AuthorityKeyIdentifier(info).toASN1Object();
@@ -119,7 +116,7 @@ public class Utils {
 		final X500NameBuilder builderSubject = createStdBuilderSubject("Test Intermediate Certificate");
 
 		final X509v3CertificateBuilder certGen = new JcaX509v3CertificateBuilder(
-				caCert, BigInteger.valueOf(1),
+                caCert, BigInteger.valueOf(2),
 				new Date(System.currentTimeMillis()),
 				new Date(System.currentTimeMillis() + VALIDITY_PERIOD),
 		        builderSubject.build(), pubKey);
@@ -197,7 +194,7 @@ public class Utils {
 	 */
 	public static X500PrivateCredential createIntermediateCredential(PrivateKey caKey, X509Certificate caCert) throws Exception {
 		KeyPair interPair = generateRSAKeyPair();
-		X509Certificate interCert = generateIntermediateCert(interPair.getPublic(), caKey, caCert);
+        X509Certificate interCert = generateIntermediateCert(interPair.getPublic(), caKey, caCert);
 
 		return new X500PrivateCredential(interCert, interPair.getPrivate(), INTERMEDIATE_ALIAS);
 	}

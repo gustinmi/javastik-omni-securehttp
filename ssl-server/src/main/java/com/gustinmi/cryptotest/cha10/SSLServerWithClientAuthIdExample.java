@@ -3,15 +3,7 @@ package com.gustinmi.cryptotest.cha10;
 import java.io.FileInputStream;
 import java.security.KeyStore;
 import java.security.Principal;
-
-import javax.net.ssl.KeyManagerFactory;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLPeerUnverifiedException;
-import javax.net.ssl.SSLServerSocket;
-import javax.net.ssl.SSLServerSocketFactory;
-import javax.net.ssl.SSLSession;
-import javax.net.ssl.SSLSocket;
-import javax.net.ssl.TrustManagerFactory;
+import javax.net.ssl.*;
 import javax.security.auth.x500.X500Principal;
 
 /**
@@ -36,25 +28,25 @@ public class SSLServerWithClientAuthIdExample extends SSLServerExample {
 	 * Create an SSL context with identity and trust stores in place
 	 */
 	protected static SSLContext createSSLContext() throws Exception {
-		// set up a key manager for our local credentials
+
+        // IDENTITY - Who am i
+
+        // set up a key manager for our local credentials
 		KeyManagerFactory mgrFact = KeyManagerFactory.getInstance("SunX509");
 		KeyStore serverStore = KeyStore.getInstance("JKS");
-
 		serverStore.load(new FileInputStream("server.jks"), Utils.SERVER_PASSWORD);
-
 		mgrFact.init(serverStore, Utils.SERVER_PASSWORD);
+
+        // Trust stores- Who do I trust
 
 		// set up a trust manager so we can recognize the server
 		TrustManagerFactory trustFact = TrustManagerFactory.getInstance("SunX509");
 		KeyStore trustStore = KeyStore.getInstance("JKS");
-
 		trustStore.load(new FileInputStream("trustStore.jks"), Utils.TRUST_STORE_PASSWORD);
-
 		trustFact.init(trustStore);
 
 		// create a context and set up a socket factory
 		SSLContext sslContext = SSLContext.getInstance("TLS");
-
 		sslContext.init(mgrFact.getKeyManagers(), trustFact.getTrustManagers(), null);
 
 		return sslContext;

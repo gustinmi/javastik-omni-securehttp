@@ -27,23 +27,23 @@ import org.bouncycastle.x509.extension.AuthorityKeyIdentifierStructure;
 @SuppressWarnings("deprecation")
 public class Utils {
 
+    public static final boolean INFO_ENEABLED = true;
+    public static final boolean SYSOUT_ENABLED = true;
+
 	private static final String BC = org.bouncycastle.jce.provider.BouncyCastleProvider.PROVIDER_NAME;
 
+    // for base64 encoding
 	static final String digits = "0123456789abcdef";
 
-	public static String ROOT_ALIAS = "root";
-	public static String INTERMEDIATE_ALIAS = "intermediate";
-	public static String END_ENTITY_ALIAS = "end";
-
-    /**
-     * localhost Host name for our examples to use.
-     */
+    // http server data 
     public static final String HOST = "localhost";
-
-    /**
-     * 9020 Port number for our examples to use.
-     */
     public static final int PORT_NO = 9020;
+
+    // strings
+
+    public static String ROOT_ALIAS = "root";
+    public static String INTERMEDIATE_ALIAS = "intermediate";
+    public static String END_ENTITY_ALIAS = "end";
 
 	public static final String SERVER_NAME = "server";
 	public static final char[] SERVER_PASSWORD = "serverPassword".toCharArray();
@@ -54,6 +54,7 @@ public class Utils {
 	public static final String TRUST_STORE_NAME = "trustStore";
 	public static final char[] TRUST_STORE_PASSWORD = "trustPassword".toCharArray();
 
+    // JKS and cert expiration
 	private static final int VALIDITY_PERIOD = 364 * 24 * 60 * 60 * 1000; // year
 
 	/**
@@ -77,7 +78,7 @@ public class Utils {
     /**
      * Generate a sample V1 certificate to use as a CA root certificate
      */
-	public static X509Certificate generateRootCertBuilder(KeyPair pair) throws Exception {
+    private static X509Certificate generateRootCertBuilder(KeyPair pair) throws Exception {
 
 		// distinguished name table.
         final X500NameBuilder builderIssuer = createStdBuilderSubject("TestIssuer CA Root Certificate");
@@ -106,7 +107,7 @@ public class Utils {
 		}
 	}
 
-    public static X509Certificate generateIntermediateCertWithBuilder(PublicKey pubKey, PrivateKey caPrivKey, X509Certificate caCert) throws Exception {
+    private static X509Certificate generateIntermediateCertWithBuilder(PublicKey pubKey, PrivateKey caPrivKey, X509Certificate caCert) throws Exception {
 
 		final X500NameBuilder builderSubject = createStdBuilderSubject("Test Intermediate Certificate");
 
@@ -128,7 +129,7 @@ public class Utils {
 	/**
 	 * Generate a sample V3 certificate to use as an intermediate CA certificate
 	 */
-	public static X509Certificate generateIntermediateCert(PublicKey intKey, PrivateKey caKey, X509Certificate caCert) throws Exception {
+    private static X509Certificate generateIntermediateCert(PublicKey intKey, PrivateKey caKey, X509Certificate caCert) throws Exception {
 		X509V3CertificateGenerator certGen = new X509V3CertificateGenerator();
 
 		certGen.setSerialNumber(BigInteger.valueOf(1));
@@ -149,7 +150,7 @@ public class Utils {
 	/**
 	 * Generate a sample V3 certificate to use as an end entity certificate
 	 */
-	public static X509Certificate generateEndEntityCert(PublicKey entityKey, PrivateKey caKey, X509Certificate caCert) throws Exception {
+    private static X509Certificate generateEndEntityCert(PublicKey entityKey, PrivateKey caKey, X509Certificate caCert) throws Exception {
 		X509V3CertificateGenerator certGen = new X509V3CertificateGenerator();
 
 		certGen.setSerialNumber(BigInteger.valueOf(1));
@@ -237,7 +238,7 @@ public class Utils {
 	 * 
 	 * @return a fixed random
 	 */
-	public static SecureRandom createFixedRandom() {
+    static SecureRandom createFixedRandom() {
 		return new FixedRand();
 	}
 
@@ -261,7 +262,7 @@ public class Utils {
 	 * @throws NoSuchAlgorithmException
 	 * @throws NoSuchProviderException
 	 */
-	public static SecretKey createKeyForAES(int bitLength, SecureRandom random) throws NoSuchAlgorithmException, NoSuchProviderException {
+    static SecretKey createKeyForAES(int bitLength, SecureRandom random) throws NoSuchAlgorithmException, NoSuchProviderException {
 		KeyGenerator generator = KeyGenerator.getInstance("AES", "BC");
 
 		generator.init(256, random);
@@ -415,5 +416,7 @@ public class Utils {
 		return buf.toString();
 
 	}
+
+
 
 }

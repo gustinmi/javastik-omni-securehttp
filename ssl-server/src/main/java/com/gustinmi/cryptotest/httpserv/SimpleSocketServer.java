@@ -1,6 +1,5 @@
-package com.gustinmi.ssltester;
+package com.gustinmi.cryptotest.httpserv;
 
-import static com.gustinmi.cryptotest.Flags.*;
 import static com.gustinmi.cryptotest.Utils.*;
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -25,7 +24,7 @@ public class SimpleSocketServer {
 
             final Socket clntSock = serverSocket.accept(); // Get client connection
             final SocketAddress clientAddress = clntSock.getRemoteSocketAddress();
-            if (SYSOUT_ENABLED) System.out.printf("Handling client at %s \n", clientAddress);
+            if (Utils.SYSOUT_ENABLED) System.out.printf("Handling client at %s \n", clientAddress);
 
             try {
                 HttpProtocol.doProtocolServer(clntSock);

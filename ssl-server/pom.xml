@@ -49,4 +49,7 @@
 		</dependency>
 
 	</dependencies>
+	<scm>
+		<developerConnection>Mitja Gustin gustinmi@gmail.com</developerConnection>
+	</scm>
 </project>

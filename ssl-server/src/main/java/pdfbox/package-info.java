@@ -1,8 +1,0 @@
-/**
- * 
- */
-/**
- * @author gustin
- *
- */
-package pdfbox;

@@ -1,6 +1,5 @@
-package com.gustinmi.ssltester;
+package com.gustinmi.cryptotest.httpserv;
 
-import static com.gustinmi.cryptotest.Flags.*;
 import java.io.*;
 import java.net.Socket;
 import java.security.Principal;
@@ -50,9 +49,9 @@ public class HttpProtocol {
 
             try {
                 final Principal clientID = session.getPeerPrincipal();
-                if (INFO_ENEABLED) log.info("client identified as: " + clientID);
+                if (Utils.INFO_ENEABLED) log.info("client identified as: " + clientID);
             } catch (SSLPeerUnverifiedException e) {
-                if (SYSOUT_ENABLED) System.out.println("client not authenticated");
+                if (Utils.SYSOUT_ENABLED) System.out.println("client not authenticated");
             }
 
             try (final OutputStream outputStream = sslSock.getOutputStream()) {
@@ -72,14 +71,14 @@ public class HttpProtocol {
      * Read a HTTP request
      */
     public static void readRequest(InputStream in) throws IOException {
-        if (SYSOUT_ENABLED) System.out.print("Request: ");
+        if (Utils.SYSOUT_ENABLED) System.out.print("Request: ");
         int ch = 0;
         int lastCh = 0;
         while ((ch = in.read()) >= 0 && (ch != '\n' && lastCh != '\n')) {
-            if (SYSOUT_ENABLED) System.out.print((char) ch);
+            if (Utils.SYSOUT_ENABLED) System.out.print((char) ch);
             if (ch != '\r') lastCh = ch;
         }
-        if (SYSOUT_ENABLED) System.out.println("end of request.");
+        if (Utils.SYSOUT_ENABLED) System.out.println("end of request.");
     }
 
     /**

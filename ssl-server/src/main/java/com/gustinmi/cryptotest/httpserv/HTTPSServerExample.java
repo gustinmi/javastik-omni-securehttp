@@ -1,11 +1,10 @@
-package com.gustinmi.cryptotest.cha10;
+package com.gustinmi.cryptotest.httpserv;
 
 import static com.gustinmi.cryptotest.Utils.*;
-import static com.gustinmi.ssltester.HttpProtocol.*;
+import static com.gustinmi.cryptotest.httpserv.HttpProtocol.*;
 import java.io.IOException;
 import java.security.Principal;
 import javax.net.ssl.*;
-import com.gustinmi.cryptotest.SSLContextFactoryBuilder;
 
 /**
  * Basic SSL Server with optional client authentication.

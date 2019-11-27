@@ -1,10 +1,9 @@
-package com.gustinmi.ssltester;
+package com.gustinmi.cryptotest.httpserv;
 
 import static com.gustinmi.cryptotest.Utils.*;
 import javax.net.ssl.SSLServerSocket;
 import javax.net.ssl.SSLServerSocketFactory;
 import javax.net.ssl.SSLSocket;
-import com.gustinmi.cryptotest.cha10.SSLServerExample;
 
 /**
  * Basic SSL Server with client authentication.

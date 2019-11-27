@@ -22,7 +22,6 @@ import java.security.cert.X509Certificate;
 import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.pdfbox.cos.COSArray;

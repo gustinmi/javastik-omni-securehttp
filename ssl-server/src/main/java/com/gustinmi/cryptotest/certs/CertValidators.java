@@ -1,4 +1,4 @@
-package com.gustinmi.cryptotest;
+package com.gustinmi.cryptotest.certs;
 
 import java.security.Principal;
 import javax.net.ssl.HostnameVerifier;
@@ -6,7 +6,7 @@ import javax.net.ssl.SSLPeerUnverifiedException;
 import javax.net.ssl.SSLSession;
 import javax.security.auth.x500.X500Principal;
 
-public class Validators {
+public class CertValidators {
 
     /**
      * Check that the principal we have been given is for the end entity.

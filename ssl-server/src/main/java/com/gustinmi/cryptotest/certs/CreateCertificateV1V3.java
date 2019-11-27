@@ -1,4 +1,4 @@
-package com.gustinmi.cryptotest.cha6;
+package com.gustinmi.cryptotest.certs;
 
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStreamWriter;
@@ -16,11 +16,13 @@ import org.bouncycastle.x509.X509V1CertificateGenerator;
 import org.bouncycastle.x509.X509V3CertificateGenerator;
 import com.gustinmi.cryptotest.Utils;
 
-public class CreateCertificate {
+@SuppressWarnings("deprecation")
+public class CreateCertificateV1V3 {
 
     // Some of the options you can use in creating certificates 
 
-	public static X509Certificate generateV3Certificate(KeyPair pair) throws InvalidKeyException, NoSuchProviderException, SignatureException {
+
+    public static X509Certificate generateV3Certificate(KeyPair pair) throws InvalidKeyException, NoSuchProviderException, SignatureException {
 		// generate the certificate
 		X509V3CertificateGenerator certGen = new X509V3CertificateGenerator();
 

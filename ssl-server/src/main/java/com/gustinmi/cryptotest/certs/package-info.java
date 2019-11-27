@@ -5,4 +5,4 @@
  * @author gustin
  *
  */
-package com.gustinmi.ssl;
+package com.gustinmi.cryptotest.certs;

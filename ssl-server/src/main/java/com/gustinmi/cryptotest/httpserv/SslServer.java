@@ -1,6 +1,5 @@
-package com.gustinmi.ssltester;
+package com.gustinmi.cryptotest.httpserv;
 
-import static com.gustinmi.cryptotest.Flags.*;
 import static com.gustinmi.cryptotest.Utils.*;
 import java.io.File;
 import java.io.IOException;
@@ -10,7 +9,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.net.ssl.*;
 import com.gustinmi.cryptotest.Utils;
-import com.gustinmi.cryptotest.Validators;
+import com.gustinmi.cryptotest.certs.CertValidators;
 
 /**
  * Basic SSL Server with optional client authentication.
@@ -27,7 +26,7 @@ public class SslServer {
 	    if (new File("server.jks").exists() == false || new File("trustStore.jks").exists() == false)
 	        throw new IllegalStateException("Please create keystores first. Run CreateKeyStores.java");
 
-        if (INFO_ENEABLED) log.info("Starting SSL server on port " + PORT_NO);
+        if (Utils.INFO_ENEABLED) log.info("Starting SSL server on port " + PORT_NO);
 
 		// Get name and IP address of the local host
 		try {
@@ -48,7 +47,7 @@ public class SslServer {
 
             final SSLSocket sslSock = (SSLSocket) sSock.accept();
 			
-            if (SYSOUT_ENABLED) System.out.printf("Handling client at %s on port %s \n", sslSock.getInetAddress().getHostAddress(), sslSock.getPort());
+            if (Utils.SYSOUT_ENABLED) System.out.printf("Handling client at %s on port %s \n", sslSock.getInetAddress().getHostAddress(), sslSock.getPort());
 			
 			try {
 				sslSock.startHandshake();
@@ -60,7 +59,7 @@ public class SslServer {
             if (peerVerificationEnabled) {
                 try {
                     // process if principal checks out
-                    Validators.isEndEntity(sslSock.getSession(), "CN=Test End Certificate");
+                    CertValidators.isEndEntity(sslSock.getSession(), "CN=Test End Certificate");
 
                 } catch (SSLPeerUnverifiedException e) {
                     log.log(Level.SEVERE, e.getMessage(), e);

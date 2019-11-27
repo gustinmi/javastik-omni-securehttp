@@ -1,10 +1,9 @@
-package com.gustinmi.ssl;
+package com.gustinmi.cryptotest;
 
 import java.io.FileOutputStream;
 import java.security.KeyStore;
 import java.security.cert.Certificate;
 import javax.security.auth.x500.X500PrivateCredential;
-import com.gustinmi.cryptotest.Utils;
 
 /**
  * Create the various credentials for an SSL session

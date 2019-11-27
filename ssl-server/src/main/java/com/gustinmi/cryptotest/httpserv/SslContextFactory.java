@@ -1,31 +1,34 @@
-package com.gustinmi.cryptotest;
+package com.gustinmi.cryptotest.httpserv;
 
-import static com.gustinmi.cryptotest.Utils.*;
 import java.io.FileInputStream;
 import java.security.KeyStore;
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManagerFactory;
 
-public class SSLContextFactoryBuilder {
+public class SslContextFactory {
 
-
-    public static SSLContext createServerSSLContext() throws Exception {
+    /**
+     * Create an SSL context with identity and trust stores in place.
+     * Identity : Who am I
+     * Trust : who do I trust
+     */
+    protected static SSLContext createSSLContext(String serverJksPath, char[] jksPassword, String trustKeystorepath, char[] trustPassword) throws Exception {
 
         // IDENTITY - Who am i
 
         // set up a key manager for our local credentials
         KeyManagerFactory mgrFact = KeyManagerFactory.getInstance("SunX509");
         KeyStore serverStore = KeyStore.getInstance("JKS");
-        serverStore.load(new FileInputStream("server.jks"), SERVER_PASSWORD);
-        mgrFact.init(serverStore, SERVER_PASSWORD);
+        serverStore.load(new FileInputStream(serverJksPath), jksPassword);
+        mgrFact.init(serverStore, jksPassword);
 
         // Trust stores- Who do I trust
 
         // set up a trust manager so we can recognize the server
         TrustManagerFactory trustFact = TrustManagerFactory.getInstance("SunX509");
         KeyStore trustStore = KeyStore.getInstance("JKS");
-        trustStore.load(new FileInputStream("trustStore.jks"), TRUST_STORE_PASSWORD);
+        trustStore.load(new FileInputStream(trustKeystorepath), trustPassword);
         trustFact.init(trustStore);
 
         // create a context and set up a socket factory

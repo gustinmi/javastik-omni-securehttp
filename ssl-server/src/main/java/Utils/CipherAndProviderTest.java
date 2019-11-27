@@ -1,16 +1,59 @@
-package com.gustinmi.cryptotest;
+package Utils;
 
 import java.security.*;
 import java.util.Iterator;
 import javax.crypto.*;
 import javax.crypto.spec.SecretKeySpec;
+import com.gustinmi.cryptotest.Utils;
 
 // import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 public class CipherAndProviderTest 
 {
 
-	public static void main( String[] args ) throws NoSuchAlgorithmException, NoSuchProviderException, NoSuchPaddingException, InvalidKeyException, ShortBufferException, IllegalBlockSizeException, BadPaddingException {
+    public static void main(String[] args) {
+
+        System.out.println("======== Testing provider");
+        // Ensure bouncy castle provider is installed
+        CipherAndProviderTest.testProvider("BC");
+
+        System.out.println("======== Testing providerPrecendence");
+        try {
+            CipherAndProviderTest.providerPrecendence();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (NoSuchPaddingException e) {
+            e.printStackTrace();
+        } catch (NoSuchProviderException e) {
+            e.printStackTrace();
+        }
+
+        System.out.println("======== Listing provider capabilities");
+        // Provider capabilities
+        CipherAndProviderTest.providerCapabilities("BC");
+
+        System.out.println("======== Testing unlimited policy files");
+
+        // Ensure unlimited policy files present
+        try {
+            CipherAndProviderTest.testUnlimitedPolicyFiles();
+        } catch (InvalidKeyException e) {
+            e.printStackTrace();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (NoSuchPaddingException e) {
+            e.printStackTrace();
+        } catch (IllegalBlockSizeException e) {
+            e.printStackTrace();
+        } catch (BadPaddingException e) {
+            e.printStackTrace();
+        }
+
+        System.out.println("======== ALL PASSED ");
+
+    }
+
+    public static void testCiphers(String[] args) throws NoSuchAlgorithmException, NoSuchProviderException, NoSuchPaddingException, InvalidKeyException, ShortBufferException, IllegalBlockSizeException, BadPaddingException {
 		
 		byte[] input = new byte[]{
 				(byte) 0x00, (byte) 0x01, (byte) 0x02, (byte) 0x03, (byte) 0x04, (byte) 0x05, (byte) 0x06, (byte) 0x07,

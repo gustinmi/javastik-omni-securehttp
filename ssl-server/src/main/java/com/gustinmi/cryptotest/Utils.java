@@ -21,10 +21,8 @@ import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.bouncycastle.cert.jcajce.JcaX509v3CertificateBuilder;
 import org.bouncycastle.operator.ContentSigner;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
-import org.bouncycastle.x509.X509V1CertificateGenerator;
 import org.bouncycastle.x509.X509V3CertificateGenerator;
 import org.bouncycastle.x509.extension.AuthorityKeyIdentifierStructure;
-//import org.bouncycastle.x509.extension.SubjectKeyIdentifierStructure;
 
 @SuppressWarnings("deprecation")
 public class Utils {
@@ -36,6 +34,16 @@ public class Utils {
 	public static String ROOT_ALIAS = "root";
 	public static String INTERMEDIATE_ALIAS = "intermediate";
 	public static String END_ENTITY_ALIAS = "end";
+
+    /**
+     * localhost Host name for our examples to use.
+     */
+    public static final String HOST = "localhost";
+
+    /**
+     * 9020 Port number for our examples to use.
+     */
+    public static final int PORT_NO = 9020;
 
 	public static final String SERVER_NAME = "server";
 	public static final char[] SERVER_PASSWORD = "serverPassword".toCharArray();
@@ -59,22 +67,6 @@ public class Utils {
 		return Logger.getLogger(myCaller.getClassName());
 	}
 
-	/**
-	 * Generate a sample V1 certificate to use as a CA root certificate
-	 */
-
-	public static X509Certificate generateRootCert(KeyPair pair) throws Exception {
-		X509V1CertificateGenerator certGen = new X509V1CertificateGenerator();
-		certGen.setSerialNumber(BigInteger.valueOf(1));
-		certGen.setIssuerDN(new X500Principal("CN=TestIssuer CA Root Certificate"));
-		certGen.setNotBefore(new Date(System.currentTimeMillis()));
-		certGen.setNotAfter(new Date(System.currentTimeMillis() + VALIDITY_PERIOD));
-		certGen.setSubjectDN(new X500Principal("CN=TestSubject CA Root Certificate"));
-		certGen.setPublicKey(pair.getPublic());
-		certGen.setSignatureAlgorithm("SHA1WithRSAEncryption");
-		return certGen.generateX509Certificate(pair.getPrivate(), "BC");
-	}
-
 	private static X500NameBuilder createStdBuilderSubject(String cn) {
 		final X500NameBuilder builder = new X500NameBuilder(BCStyle.INSTANCE);
 		builder.addRDN(BCStyle.CN, cn);
@@ -82,6 +74,9 @@ public class Utils {
 		return builder;
 	}
 
+    /**
+     * Generate a sample V1 certificate to use as a CA root certificate
+     */
 	public static X509Certificate generateRootCertBuilder(KeyPair pair) throws Exception {
 
 		// distinguished name table.
@@ -111,7 +106,7 @@ public class Utils {
 		}
 	}
 
-	public static X509Certificate generateIntermediateCert1(PublicKey pubKey, PrivateKey caPrivKey, X509Certificate caCert) throws Exception {
+    public static X509Certificate generateIntermediateCertWithBuilder(PublicKey pubKey, PrivateKey caPrivKey, X509Certificate caCert) throws Exception {
 
 		final X500NameBuilder builderSubject = createStdBuilderSubject("Test Intermediate Certificate");
 
@@ -121,9 +116,8 @@ public class Utils {
 				new Date(System.currentTimeMillis() + VALIDITY_PERIOD),
 		        builderSubject.build(), pubKey);
 
+        // Add Extensions
 		certGen.addExtension(X509Extensions.AuthorityKeyIdentifier, false, fromKey(pubKey));
-
-		// Extensions.
 
 		final ContentSigner sigGen = new JcaContentSignerBuilder("SHA256withRSA").setProvider(BC).build(caPrivKey);
 		final X509Certificate cert = new JcaX509CertificateConverter().setProvider(BC).getCertificate(certGen.build(sigGen));
@@ -146,10 +140,6 @@ public class Utils {
 		certGen.setSignatureAlgorithm("SHA1WithRSAEncryption");
 
 		certGen.addExtension(X509Extensions.AuthorityKeyIdentifier, false, new AuthorityKeyIdentifierStructure(caCert));
-		
-		//certGen.addExtension(X509Extensions.SubjectKeyIdentifier, false, new SubjectKeyIdentifierStructure(intKey))
-		
-		
 		certGen.addExtension(X509Extensions.BasicConstraints, true, new BasicConstraints(0));
 		certGen.addExtension(X509Extensions.KeyUsage, true, new KeyUsage(KeyUsage.digitalSignature | KeyUsage.keyCertSign | KeyUsage.cRLSign));
 
@@ -182,10 +172,8 @@ public class Utils {
 	 * Generate a X500PrivateCredential for the root entity.
 	 */
 	public static X500PrivateCredential createRootCredential() throws Exception {
-		KeyPair rootPair = generateRSAKeyPair();
-		// X509Certificate rootCert = generateRootCert(rootPair);
+        final KeyPair rootPair = generateRSAKeyPair();
 		final X509Certificate rootCert = generateRootCertBuilder(rootPair);
-
 		return new X500PrivateCredential(rootCert, rootPair.getPrivate(), ROOT_ALIAS);
 	}
 
@@ -195,7 +183,6 @@ public class Utils {
 	public static X500PrivateCredential createIntermediateCredential(PrivateKey caKey, X509Certificate caCert) throws Exception {
 		KeyPair interPair = generateRSAKeyPair();
         X509Certificate interCert = generateIntermediateCert(interPair.getPublic(), caKey, caCert);
-
 		return new X500PrivateCredential(interCert, interPair.getPrivate(), INTERMEDIATE_ALIAS);
 	}
 
@@ -205,7 +192,6 @@ public class Utils {
 	public static X500PrivateCredential createEndEntityCredential(PrivateKey caKey, X509Certificate caCert) throws Exception {
 		KeyPair endPair = generateRSAKeyPair();
 		X509Certificate endCert = generateEndEntityCert(endPair.getPublic(), caKey, caCert);
-
 		return new X500PrivateCredential(endCert, endPair.getPrivate(), END_ENTITY_ALIAS);
 	}
 

@@ -1,10 +1,10 @@
 package com.gustinmi.cryptotest.cha10;
 
+import static com.gustinmi.cryptotest.Utils.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
-
 import javax.net.ssl.SSLServerSocket;
 import javax.net.ssl.SSLServerSocketFactory;
 import javax.net.ssl.SSLSocket;
@@ -22,7 +22,7 @@ public class SSLServerExample {
 		InputStream in = sSock.getInputStream();
 		OutputStream out = sSock.getOutputStream();
 
-		out.write(Utils.toByteArray("Hello "));
+        out.write(toByteArray("Hello "));
 
 		int ch = 0;
 		while ((ch = in.read()) != '!') {
@@ -38,7 +38,7 @@ public class SSLServerExample {
 
 	public static void main(String[] args) throws Exception {
 		SSLServerSocketFactory fact = (SSLServerSocketFactory) SSLServerSocketFactory.getDefault();
-		SSLServerSocket sSock = (SSLServerSocket) fact.createServerSocket(Utils.PORT_NO);
+        SSLServerSocket sSock = (SSLServerSocket) fact.createServerSocket(PORT_NO);
 
 		SSLSocket sslSock = (SSLSocket) sSock.accept();
 

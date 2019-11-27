@@ -9,23 +9,16 @@ import java.security.NoSuchProviderException;
 import java.security.SignatureException;
 import java.security.cert.X509Certificate;
 import java.util.Date;
-
 import javax.security.auth.x500.X500Principal;
-
-import org.bouncycastle.asn1.x509.BasicConstraints;
-import org.bouncycastle.asn1.x509.ExtendedKeyUsage;
-import org.bouncycastle.asn1.x509.GeneralName;
-import org.bouncycastle.asn1.x509.GeneralNames;
-import org.bouncycastle.asn1.x509.KeyPurposeId;
-import org.bouncycastle.asn1.x509.KeyUsage;
-import org.bouncycastle.asn1.x509.X509Extensions;
+import org.bouncycastle.asn1.x509.*;
 import org.bouncycastle.openssl.PEMWriter;
 import org.bouncycastle.x509.X509V1CertificateGenerator;
 import org.bouncycastle.x509.X509V3CertificateGenerator;
-
 import com.gustinmi.cryptotest.Utils;
 
 public class CreateCertificate {
+
+    // Some of the options you can use in creating certificates 
 
 	public static X509Certificate generateV3Certificate(KeyPair pair) throws InvalidKeyException, NoSuchProviderException, SignatureException {
 		// generate the certificate

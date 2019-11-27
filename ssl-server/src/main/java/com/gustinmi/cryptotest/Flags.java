@@ -9,7 +9,7 @@ package com.gustinmi.cryptotest;
  */
 public class Flags {
 
-    public static final boolean INFO_ENEABLED = false;
-    public static final boolean SYSOUT_ENABLED = false;
+    public static final boolean INFO_ENEABLED = true;
+    public static final boolean SYSOUT_ENABLED = true;
 
 }

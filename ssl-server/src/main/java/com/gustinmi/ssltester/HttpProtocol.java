@@ -2,13 +2,14 @@ package com.gustinmi.ssltester;
 
 import static com.gustinmi.cryptotest.Flags.*;
 import java.io.*;
+import java.net.Socket;
 import java.security.Principal;
 import java.util.Date;
 import java.util.logging.Logger;
 import javax.net.ssl.SSLPeerUnverifiedException;
 import javax.net.ssl.SSLSession;
 import javax.net.ssl.SSLSocket;
-import com.gustinmi.cryptotest.cha10.Utils;
+import com.gustinmi.cryptotest.Utils;
 
 /** HTTP Protocol specifics 
  * @author gustin
@@ -18,7 +19,28 @@ public class HttpProtocol {
 
     public static final Logger log = Utils.loggerForThisClass();
 
-    public static void doProtocol(SSLSocket sslSock) throws IOException {
+    /** Normal socket (no SSL utilities, wrappers) */
+    public static void doProtocolServer(Socket socket) throws IOException {
+
+        try (final InputStream inputStream = socket.getInputStream()) {
+
+            HttpProtocol.readRequest(inputStream);
+
+            try (final OutputStream outputStream = socket.getOutputStream()) {
+                HttpProtocol.sendResponse(outputStream);
+            }
+
+        }
+        finally {
+            try {
+                socket.close(); // end client request       
+            } catch (Exception ex) {}
+        }
+
+    }
+
+    /**Socket with SSL context */
+    public static void doProtocolServer(SSLSocket sslSock) throws IOException {
 
         try (final InputStream inputStream = sslSock.getInputStream()) {
 
@@ -40,7 +62,7 @@ public class HttpProtocol {
         }
         finally {
             try {
-                if (!sslSock.isClosed()) sslSock.close(); // end client request       
+                sslSock.close(); // end client request       
             } catch (Exception ex) {}
         }
 
@@ -73,7 +95,7 @@ public class HttpProtocol {
         // HTTP request body
         pWrt.print("<html>\r\n");
         pWrt.print("<body>\r\n");
-        pWrt.printf("Hello from SSL server. Time on server is %s \r\n", new Date().toString());
+        pWrt.printf("Hello from server. Time on server is %s \r\n", new Date().toString());
         pWrt.print("</body>\r\n");
         pWrt.print("</html>\r\n");
         pWrt.flush();

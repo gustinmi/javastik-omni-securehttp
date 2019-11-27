@@ -9,7 +9,7 @@ Cryptotest
 
 1. Extract unlimited policy files to to jre/lib/. Replace existing ones. 
 
-1. Change jre/lib/securityjava.security file. Add provider to section "List of providers and their preference orders (see above)"
+1. Change jre/lib/security/java.security file. Add provider to section "List of providers and their preference orders (see above)"
 
 `security.provider.11=org.bouncycastle.jce.provider.BouncyCastleProvider`
 

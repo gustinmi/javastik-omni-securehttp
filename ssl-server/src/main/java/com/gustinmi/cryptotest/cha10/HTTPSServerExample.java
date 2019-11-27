@@ -1,59 +1,22 @@
 package com.gustinmi.cryptotest.cha10;
 
+import static com.gustinmi.cryptotest.Utils.*;
+import static com.gustinmi.ssltester.HttpProtocol.*;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
 import java.security.Principal;
-
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLPeerUnverifiedException;
-import javax.net.ssl.SSLServerSocket;
-import javax.net.ssl.SSLServerSocketFactory;
-import javax.net.ssl.SSLSession;
-import javax.net.ssl.SSLSocket;
+import javax.net.ssl.*;
+import com.gustinmi.cryptotest.SSLContextFactoryBuilder;
 
 /**
  * Basic SSL Server with optional client authentication.
  */
 public class HTTPSServerExample extends SSLServerWithClientAuthIdExample {
-	/**
-	 * Read a HTTP request
-	 */
-	private static void readRequest(InputStream in) throws IOException {
-		System.out.print("Request: ");
-		int ch = 0;
-		int lastCh = 0;
-		while ((ch = in.read()) >= 0 && (ch != '\n' && lastCh != '\n')) {
-			System.out.print((char) ch);
-			if (ch != '\r')
-				lastCh = ch;
-		}
 
-		System.out.println();
-	}
-
-	/**
-	 * Send a response
-	 */
-	private static void sendResponse(OutputStream out) {
-		PrintWriter pWrt = new PrintWriter(new OutputStreamWriter(out));
-		pWrt.print("HTTP/1.1 200 OK\r\n");
-		pWrt.print("Content-Type: text/html\r\n");
-		pWrt.print("\r\n");
-		pWrt.print("<html>\r\n");
-		pWrt.print("<body>\r\n");
-		pWrt.print("Hello World!\r\n");
-		pWrt.print("</body>\r\n");
-		pWrt.print("</html>\r\n");
-		pWrt.flush();
-	}
 
 	public static void main(String[] args) throws Exception {
-		SSLContext sslContext = createSSLContext();
+        SSLContext sslContext = SSLContextFactoryBuilder.createServerSSLContext();
 		SSLServerSocketFactory fact = sslContext.getServerSocketFactory();
-		SSLServerSocket sSock = (SSLServerSocket) fact.createServerSocket(Utils.PORT_NO);
+        SSLServerSocket sSock = (SSLServerSocket) fact.createServerSocket(PORT_NO);
 
 		// client authenticate where possible
 		sSock.setWantClientAuth(true);

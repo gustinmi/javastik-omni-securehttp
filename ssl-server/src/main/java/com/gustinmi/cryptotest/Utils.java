@@ -5,6 +5,7 @@ import java.math.BigInteger;
 import java.security.*;
 import java.security.cert.X509Certificate;
 import java.util.Date;
+import java.util.Random;
 import java.util.logging.Logger;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
@@ -46,13 +47,13 @@ public class Utils {
     public static String END_ENTITY_ALIAS = "end";
 
 	public static final String SERVER_NAME = "server";
-	public static final char[] SERVER_PASSWORD = "serverPassword".toCharArray();
+    public static final char[] SERVER_PASSWORD = "p".toCharArray();
 
 	public static final String CLIENT_NAME = "client";
-	public static final char[] CLIENT_PASSWORD = "clientPassword".toCharArray();
+    public static final char[] CLIENT_PASSWORD = "p".toCharArray();
 
 	public static final String TRUST_STORE_NAME = "trustStore";
-	public static final char[] TRUST_STORE_PASSWORD = "trustPassword".toCharArray();
+    public static final char[] TRUST_STORE_PASSWORD = "p".toCharArray();
 
     // JKS and cert expiration
 	private static final int VALIDITY_PERIOD = 364 * 24 * 60 * 60 * 1000; // year
@@ -81,13 +82,13 @@ public class Utils {
     private static X509Certificate generateRootCertBuilder(KeyPair pair) throws Exception {
 
 		// distinguished name table.
-        final X500NameBuilder builderIssuer = createStdBuilderSubject("TestIssuer CA Root Certificate");
-        final X500NameBuilder builderSubject = createStdBuilderSubject("TestIssuer CA Root Subject");
+        final X500NameBuilder builderIssuer = createStdBuilderSubject("MoneyKing CA Root Certificate Issuer");
+        final X500NameBuilder builderSubject = createStdBuilderSubject("MoneyKing Root Subject");
 		final ContentSigner sigGen = new JcaContentSignerBuilder("SHA256withRSA").setProvider(BC).build(pair.getPrivate());
-		
+        final BigInteger serialNum = createSerialNum();
 		final X509v3CertificateBuilder certGen = new JcaX509v3CertificateBuilder(
 		        builderIssuer.build(), // x500 name issuer
-				BigInteger.valueOf(1), // serialNumber
+                serialNum, // serialNumber
 		        new Date(System.currentTimeMillis()), // startDate
 		        new Date(System.currentTimeMillis() + VALIDITY_PERIOD), // expiryDate
 		        builderSubject.build(), // x500 name subject
@@ -107,15 +108,18 @@ public class Utils {
 		}
 	}
 
+    //TODO need to change this. There is problem with key usage
     private static X509Certificate generateIntermediateCertWithBuilder(PublicKey pubKey, PrivateKey caPrivKey, X509Certificate caCert) throws Exception {
 
-		final X500NameBuilder builderSubject = createStdBuilderSubject("Test Intermediate Certificate");
-
+        final X500NameBuilder builderSubject = createStdBuilderSubject("MoneyKing Division Mars Intermediate Certificate");
+        final BigInteger serialNum = createSerialNum();
 		final X509v3CertificateBuilder certGen = new JcaX509v3CertificateBuilder(
-                caCert, BigInteger.valueOf(2),
+                caCert,
+                serialNum,
 				new Date(System.currentTimeMillis()),
 				new Date(System.currentTimeMillis() + VALIDITY_PERIOD),
-		        builderSubject.build(), pubKey);
+		        builderSubject.build(),
+		        pubKey);
 
         // Add Extensions
 		certGen.addExtension(X509Extensions.AuthorityKeyIdentifier, false, fromKey(pubKey));
@@ -131,12 +135,12 @@ public class Utils {
 	 */
     private static X509Certificate generateIntermediateCert(PublicKey intKey, PrivateKey caKey, X509Certificate caCert) throws Exception {
 		X509V3CertificateGenerator certGen = new X509V3CertificateGenerator();
-
-		certGen.setSerialNumber(BigInteger.valueOf(1));
+        final BigInteger serialNum = createSerialNum();
+        certGen.setSerialNumber(serialNum);
 		certGen.setIssuerDN(caCert.getSubjectX500Principal());
 		certGen.setNotBefore(new Date(System.currentTimeMillis()));
 		certGen.setNotAfter(new Date(System.currentTimeMillis() + VALIDITY_PERIOD));
-		certGen.setSubjectDN(new X500Principal("CN=Test Intermediate Certificate"));
+        certGen.setSubjectDN(new X500Principal("CN=MoneyKing Division Mars Intermediate Certificate"));
 		certGen.setPublicKey(intKey);
 		certGen.setSignatureAlgorithm("SHA1WithRSAEncryption");
 
@@ -152,12 +156,12 @@ public class Utils {
 	 */
     private static X509Certificate generateEndEntityCert(PublicKey entityKey, PrivateKey caKey, X509Certificate caCert) throws Exception {
 		X509V3CertificateGenerator certGen = new X509V3CertificateGenerator();
-
-		certGen.setSerialNumber(BigInteger.valueOf(1));
+        final BigInteger serialNum = createSerialNum();
+        certGen.setSerialNumber(serialNum);
 		certGen.setIssuerDN(caCert.getSubjectX500Principal());
 		certGen.setNotBefore(new Date(System.currentTimeMillis()));
 		certGen.setNotAfter(new Date(System.currentTimeMillis() + VALIDITY_PERIOD));
-		certGen.setSubjectDN(new X500Principal("CN=Test Client End Certificate"));
+        certGen.setSubjectDN(new X500Principal("CN=Mickey Mouse End Certificate"));
 		certGen.setPublicKey(entityKey);
 		certGen.setSignatureAlgorithm("SHA1WithRSAEncryption");
 
@@ -247,9 +251,7 @@ public class Utils {
 	 */
 	public static KeyPair generateRSAKeyPair() throws Exception {
 		KeyPairGenerator kpGen = KeyPairGenerator.getInstance("RSA", "BC");
-
 		kpGen.initialize(1024, new SecureRandom());
-
 		return kpGen.generateKeyPair();
 	}
 
@@ -264,9 +266,7 @@ public class Utils {
 	 */
     static SecretKey createKeyForAES(int bitLength, SecureRandom random) throws NoSuchAlgorithmException, NoSuchProviderException {
 		KeyGenerator generator = KeyGenerator.getInstance("AES", "BC");
-
 		generator.init(256, random);
-
 		return generator.generateKey();
 	}
 
@@ -363,14 +363,6 @@ public class Utils {
 		return toHex(contents, contents.length);
 
 	}
-	
-	public static void writeBase64(byte[] bytes) throws IOException {
-
-		// byte[] bytes = null;
-		// bytes = Base64.getEncoder().encode(bytes);
-		// Files.write(Paths.get(path), bytes);
-
-	}
 
 	/**
 	 * Convert a byte array of 8 bit characters into a String.
@@ -417,6 +409,21 @@ public class Utils {
 
 	}
 
+    public static BigInteger createSerialNum() {
+
+        final BigInteger maxLimit = new BigInteger("5000000000000");
+        final BigInteger minLimit = new BigInteger("25000000000");
+        final BigInteger bigInteger = maxLimit.subtract(minLimit);
+        final Random randNum = new Random();
+        int len = maxLimit.bitLength();
+
+        BigInteger biResult = new BigInteger(len, randNum);
+        if (biResult.compareTo(minLimit) < 0) biResult = biResult.add(minLimit);
+        if (biResult.compareTo(bigInteger) >= 0) biResult = biResult.mod(bigInteger).add(minLimit);
+
+        return biResult;
+
+    }
 
 
 }

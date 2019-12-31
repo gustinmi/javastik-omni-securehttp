@@ -10,6 +10,7 @@ import java.net.Socket;
  * Basic SSL Client - using the '!' protocol.
  */
 public class SSLClientExample {
+
 	/**
 	 * Carry out the '!' protocol - client side.
 	 */

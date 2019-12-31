@@ -29,7 +29,7 @@ public class HTTPSServerExample extends SSLServerWithClientAuthIdExample {
 				continue;
 			}
 
-			readRequest(sslSock.getInputStream());
+			readRequestFromClient(sslSock.getInputStream());
 
 			SSLSession session = sslSock.getSession();
 
@@ -41,7 +41,7 @@ public class HTTPSServerExample extends SSLServerWithClientAuthIdExample {
 				System.out.println("client not authenticated");
 			}
 
-			sendResponse(sslSock.getOutputStream());
+			sendResponseToClient(sslSock.getOutputStream());
 
 			sslSock.close();
 		}

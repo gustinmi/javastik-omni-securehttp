@@ -27,7 +27,7 @@ public class SimpleSocketServer {
             if (Utils.SYSOUT_ENABLED) System.out.printf("Handling client at %s \n", clientAddress);
 
             try {
-                HttpProtocol.doProtocolServer(clntSock);
+                HttpProtocol.doUnsecureServerProtocol(clntSock);
             } catch (IOException e) {
                 log.log(Level.SEVERE, e.getMessage(), e);
                 continue; // continue serving, do not stop if faulty client connects

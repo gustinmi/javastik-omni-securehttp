@@ -16,7 +16,8 @@ public class SSLClientWithClientAuthExample extends SSLClientExample {
 	 * Create an SSL context with a KeyManager providing our identity
 	 */
 	static SSLContext createSSLContext() throws Exception {
-		// set up a key manager for our local credentials
+
+        // set up a key manager for our local credentials
 		KeyManagerFactory mgrFact = KeyManagerFactory.getInstance("SunX509");
 		KeyStore clientStore = KeyStore.getInstance("PKCS12");
 
@@ -38,6 +39,8 @@ public class SSLClientWithClientAuthExample extends SSLClientExample {
 		SSLSocketFactory fact = sslContext.getSocketFactory();
         SSLSocket cSock = (SSLSocket) fact.createSocket(HOST, PORT_NO);
 
-		doProtocol(cSock);
+        HttpProtocol.doProtocolClient(cSock);
+
+        //doProtocol(cSock);
 	}
 }

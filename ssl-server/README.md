@@ -28,7 +28,14 @@ To run and test SSL HTTPS server, complete following:
 1. Run as java application. Defaults to 9020 port
 1. Run SSLClientWithClientAuthTrustExample.java to test everything 
 1. Use openssl for connection testing
+1. Export private and public key from .p12 for openssl with
+
+    openssl pkcs12 -in client.p12 -out clientcert.pem -nodes  
+    openssl pkcs12 -in client.p12 -out clientkey.pem -nodes -nocerts
+
 1. Connect this way `openssl s_client -connect localhost:9020 -state -debug -cert clientcert.pem -key clientkey.pem` 
+  
+
 
 ## Tools 
 

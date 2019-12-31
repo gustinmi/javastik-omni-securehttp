@@ -26,6 +26,7 @@ public class CreateKeyStores {
 		KeyStore keyStore = KeyStore.getInstance("PKCS12", "BC");
 		keyStore.load(null, null);
 
+        // PFX - add private key and certtificate chain
         keyStore.setKeyEntry(Utils.CLIENT_NAME, endCredential.getPrivateKey(), Utils.CLIENT_PASSWORD,
 		        new Certificate[] { endCredential.getCertificate(), interCredential.getCertificate(), rootCredential.getCertificate() });
 
@@ -33,7 +34,7 @@ public class CreateKeyStores {
 
         System.out.println("Created client cert in " + Utils.CLIENT_NAME + ".p12");
 
-        // trust store for client (client will trust this credentials)
+        // trust store for clients (server will trust all client whose certs were created with authorities defined in this JKS)
 		keyStore = KeyStore.getInstance("JKS");
 		keyStore.load(null, null);
         keyStore.setCertificateEntry(Utils.SERVER_NAME, rootCredential.getCertificate());

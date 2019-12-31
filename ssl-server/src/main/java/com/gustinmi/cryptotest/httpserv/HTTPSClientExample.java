@@ -7,6 +7,7 @@ import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocketFactory;
 import com.gustinmi.cryptotest.certs.CertValidators;
+import Utils.SslContextUtils;
 
 /**
  * SSL Client with client side authentication.
@@ -16,8 +17,8 @@ public class HTTPSClientExample extends SSLClientWithClientAuthTrustExample {
 
 	public static void main(String[] args) throws Exception {
 
-		SSLContext sslContext = createSSLContext();
-		SSLSocketFactory fact = sslContext.getSocketFactory();
+        SSLContext sslContext = SslContextUtils.createSSLContextClient();
+        SSLSocketFactory fact = sslContext.getSocketFactory(); // default context
 
 		// specify the URL and connection attributes
         URL url = new URL("http://" + HOST + ":" + PORT_NO);

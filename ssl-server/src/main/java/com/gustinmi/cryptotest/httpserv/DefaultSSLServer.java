@@ -12,11 +12,11 @@ import javax.net.ssl.SSLSocket;
 public class DefaultSSLServer extends SSLServerExample {
 
     public static void main(String[] args) throws Exception {
-        final SSLServerSocketFactory fact = (SSLServerSocketFactory) SSLServerSocketFactory.getDefault();
+        final SSLServerSocketFactory fact = (SSLServerSocketFactory) SSLServerSocketFactory.getDefault(); // Default SSl context
         final SSLServerSocket sSock = (SSLServerSocket) fact.createServerSocket(PORT_NO);
 		sSock.setNeedClientAuth(true);
         final SSLSocket sslSock = (SSLSocket) sSock.accept();
-        HttpProtocol.doProtocolServer(sslSock);
+        HttpProtocol.doSslServerProtocol(sslSock);
 	}
     
 }
